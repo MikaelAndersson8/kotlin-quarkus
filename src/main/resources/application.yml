@@ -1,0 +1,10 @@
+quarkus:
+  http:
+    port: ${PORT}
+  datasource:
+    db-kind: "postgresql"
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    jdbc:
+      url: ${DB_CONNECTION_STRING}
+      max-size: 16

@@ -1,17 +1,16 @@
 package com.kq.services
 
 import com.kq.dtos.MessageCreateDTO
-import com.kq.repositories.MessageRepository
-import com.kq.dtos.MessageResponseDTO
 import com.kq.dtos.MessageEditDTO
+import com.kq.dtos.MessageResponseDTO
 import com.kq.entities.MessageEntity
 import com.kq.exceptions.NotFoundException
+import com.kq.repositories.MessageRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
-
 import org.jboss.logging.Logger
-import java.util.UUID
+import java.util.*
 
 @ApplicationScoped
 class MessageService(@Inject private var messageRepository: MessageRepository) {
@@ -30,16 +29,16 @@ class MessageService(@Inject private var messageRepository: MessageRepository) {
     }
 
     @Transactional
-    fun createMessage(dto: MessageCreateDTO): MessageResponseDTO {
+    fun createMessage(dto: MessageCreateDTO): UUID {
         this.logger.info("Creating new entity with message: ${dto.message}")
 
-        val entity = MessageEntity();
+        val entity = MessageEntity()
         entity.id = UUID.randomUUID()
         entity.message = dto.message
 
         this.messageRepository.persist(entity)
 
-        return MessageResponseDTO(entity.id, message = entity.message)
+        return entity.id
     }
 
 

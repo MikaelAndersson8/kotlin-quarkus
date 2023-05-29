@@ -11,5 +11,5 @@ class ThrowableMapper : ExceptionMapper<Throwable> {
     override fun toResponse(throwable: Throwable?): Response = Response
             .status(throwable?.getStatusCode() ?: Response.Status.INTERNAL_SERVER_ERROR)
             .entity(ErrorDTO(message = throwable?.message))
-            .build();
+            .build()
 }

@@ -5,6 +5,8 @@ import com.kq.dtos.MessageEditDTO
 import com.kq.dtos.MessageResponseDTO
 import com.kq.entities.MessageEntity
 import com.kq.exceptions.NotFoundException
+import com.kq.extensions.mapToDTO
+import com.kq.extensions.mapToDTOs
 import com.kq.repositories.MessageRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -17,24 +19,20 @@ class MessageService(@Inject private var messageRepository: MessageRepository) {
     private val logger: Logger = Logger.getLogger(MessageService::class.java)
 
     @Transactional
-    fun listMessages(): List<MessageResponseDTO> = this.messageRepository.listAll().map {
-        MessageResponseDTO(message = it.message, id = it.id)
-    }
+    fun listMessages(): List<MessageResponseDTO> = this.messageRepository.listAll().mapToDTOs()
 
     @Transactional
     fun getMessage(id: UUID): MessageResponseDTO {
         val entity = this.getEntityById(id)
 
-        return MessageResponseDTO(id = entity.id, message = entity.message)
+        return entity.mapToDTO()
     }
 
     @Transactional
     fun createMessage(dto: MessageCreateDTO): UUID {
         this.logger.info("Creating new entity with message: ${dto.message}")
 
-        val entity = MessageEntity()
-        entity.id = UUID.randomUUID()
-        entity.message = dto.message
+        val entity = MessageEntity(id = UUID.randomUUID(), message = dto.message)
 
         this.messageRepository.persist(entity)
 
@@ -51,7 +49,7 @@ class MessageService(@Inject private var messageRepository: MessageRepository) {
 
         messageRepository.persist(entity)
 
-        return MessageResponseDTO(entity.id, message = entity.message)
+        return entity.mapToDTO()
     }
 
     @Transactional
